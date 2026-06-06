@@ -1,0 +1,66 @@
+name: Release Installer
+
+# Builds nmux-installer binaries and creates a GitHub Release in the
+# public neuralmux/installer repo. Triggered on push to main (manual
+# dispatch for now; can be automated when nmux release tags are created).
+
+on:
+  workflow_dispatch:
+    inputs:
+      nmux_ref:
+        description: 'nmux repo ref (branch, tag, or SHA) to build from'
+        required: true
+        default: 'main'
+
+permissions:
+  contents: write
+
+jobs:
+  build-installer:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goarch: [amd64, arm64]
+    steps:
+      - name: Checkout nmux source
+        uses: actions/checkout@v4
+        with:
+          repository: neuralmux/nmux
+          ref: ${{ github.event.inputs.nmux_ref }}
+          token: ${{ secrets.NMUX_REPO_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build installer binary
+        run: |
+          GOOS=linux GOARCH=${{ matrix.goarch }} go build \
+            -ldflags="-s -w" \
+            -o "nmux-installer-linux-${{ matrix.goarch }}" \
+            ./cmd/nmux-installer
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: nmux-installer-linux-${{ matrix.goarch }}
+          path: nmux-installer-linux-${{ matrix.goarch }}
+
+  create-release:
+    needs: build-installer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download binaries
+        uses: actions/download-artifact@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "nmux-installer ${{ github.event.inputs.nmux_ref }}"
+          tag_name: "${{ github.event.inputs.nmux_ref }}"
+          files: |
+            nmux-installer-linux-amd64/nmux-installer-linux-amd64
+            nmux-installer-linux-arm64/nmux-installer-linux-arm64
+          fail_on_unmatched_files: true
