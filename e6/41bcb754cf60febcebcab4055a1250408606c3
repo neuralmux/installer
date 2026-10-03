@@ -1,0 +1,14 @@
+install.sh
+  h_5c17ed4088434e 19-20,24-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e641bcb754cf60febcebcab4055a1250408606c3",
+  "prompts": {},
+  "humans": {
+    "h_5c17ed4088434e": {
+      "author": "Lauri Jutila <ljuti@nmux.dev>"
+    }
+  }
+}
