@@ -16,12 +16,16 @@
 # separate `checksums.txt` from the same release, so a substitution has to
 # defeat both at once.
 #
-# The installer itself is built and released by the nmux repository, from the
-# same commit as the package it installs.
+# The installer itself is built by the nmux repository from the same commit as
+# the package it installs, and published here for download.
 
 set -euo pipefail
 
-REPO="neuralmux/nmux.rs"
+# The public download host. The installer is built by neuralmux/nmux.rs, but
+# that repository is private, so its release assets are not anonymously
+# downloadable — and this script runs with no credentials. The binaries are
+# published here instead, which is also why this repository exists.
+REPO="neuralmux/installer"
 
 # --- Architecture detection ---
 ARCH=$(uname -m)
