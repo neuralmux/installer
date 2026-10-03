@@ -67,15 +67,21 @@ resolve_tag() {
 	fi
 
 	local api="https://api.github.com/repos/${REPO}/releases/latest"
-	local auth=()
-	# Unauthenticated callers get 60 requests an hour per address, which is
-	# ample for an install; a token raises it when one is present.
-	if [[ -n "${GITHUB_TOKEN:-}" ]]; then
-		auth=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
-	fi
-
 	local body
-	if ! body=$(curl -fsSL "${auth[@]}" -H "Accept: application/vnd.github+json" "$api"); then
+
+	# Branched rather than building an argument array. An empty `"${arr[@]}"`
+	# is an unbound-variable error under `set -u` before bash 4.4, which would
+	# abort every unauthenticated install on an older distribution — and the
+	# unauthenticated path is the normal one.
+	if ! body=$(
+		if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+			# Unauthenticated callers get 60 requests an hour per address,
+			# which is ample for an install; a token raises it when present.
+			curl -fsSL -H "Authorization: Bearer ${GITHUB_TOKEN}" 				-H "Accept: application/vnd.github+json" "$api"
+		else
+			curl -fsSL -H "Accept: application/vnd.github+json" "$api"
+		fi
+	); then
 		echo "Could not resolve the latest release of ${REPO}." >&2
 		echo "Set NMUX_INSTALLER_TAG to install a specific version." >&2
 		return 1
