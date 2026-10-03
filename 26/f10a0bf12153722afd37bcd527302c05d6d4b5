@@ -1,0 +1,16 @@
+README.md
+  h_5c17ed4088434e 3,9-10,12,14-16,18-21,23-46
+install.sh
+  h_5c17ed4088434e 87-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "26f10a0bf12153722afd37bcd527302c05d6d4b5",
+  "prompts": {},
+  "humans": {
+    "h_5c17ed4088434e": {
+      "author": "Lauri Jutila <ljuti@nmux.dev>"
+    }
+  }
+}
