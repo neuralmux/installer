@@ -84,4 +84,8 @@ echo "Checksum verified."
 chmod +x "$TMP"
 
 # --- Run the installer, passing through all arguments ---
-exec "$TMP" "$@"
+#
+# Not `exec`: replacing this shell would skip the EXIT trap, leaving the
+# installer binary and the checksums file behind in the temporary directory.
+# `set -e` propagates a non-zero status after the trap has run.
+"$TMP" "$@"
