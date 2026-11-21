@@ -3,7 +3,8 @@
 #
 # Usage:
 #   curl -sSL https://raw.githubusercontent.com/neuralmux/installer/main/install.sh | bash
-#   curl -sSL .../install.sh | bash -s -- --channel prerelease
+#
+# Arguments are passed through to the installer, e.g. `bash -s -- --dry-run`.
 #
 # This is a lightweight wrapper. It detects the architecture, downloads the
 # installer binary and its published checksum, verifies the two agree, runs the
